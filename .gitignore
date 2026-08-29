@@ -1,0 +1,4 @@
+runpods/configs/*
+*.zip
+*.json
+*.pth

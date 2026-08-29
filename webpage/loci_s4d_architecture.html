@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Intelligence | Next-Gen AI Architectures</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --accent-emerald: #059669;
+            --accent-emerald-dark: #047857;
+            --accent-emerald-light: #ecfdf5;
+            --accent-emerald-border: #a7f3d0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            padding: 24px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Branding Header */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .brand-subtitle {
+            color: var(--accent-emerald-dark);
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Feature Blurb */
+        .company-blurb {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 36px;
+        }
+
+        .company-blurb h2 {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .company-blurb p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 16px;
+        }
+
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .metric-card .value {
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-emerald);
+        }
+
+        .metric-card .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Tabs Navigation */
+        .tabs-header {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-emerald-dark);
+            border-bottom-color: var(--accent-emerald);
+        }
+
+        /* Tab Content Panes */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Roadmap Layout */
+        .roadmap-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .roadmap-step {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-emerald);
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 0;
+            padding: 20px;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .step-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--accent-emerald-light);
+            color: var(--accent-emerald-dark);
+            border: 1px solid var(--accent-emerald-border);
+            font-weight: 600;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--accent-emerald-dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Company Header for AWS Verification -->
+    <header>
+        <h1 class="brand-title">Brute Force Intelligence</h1>
+        <p class="brand-subtitle">State-Space Foundation Architectures for Infinite Context AI</p>
+    </header>
+
+    <!-- Executive Feature Blurb -->
+    <section class="company-blurb">
+        <h2>We are building next-generation sequence models that eliminate the memory wall.</h2>
+        <p>
+            At <strong>Brute Force Intelligence</strong>, we design constant-memory state-space model (SSM) architectures that replace resource-intensive Transformer KV-caches. Our flagship research delivers linear runtime complexity and constant GPU RAM consumption across unlimited context windows—enabling scalable, high-throughput inference on enterprise GPU infrastructure.
+        </p>
+
+        <div class="key-metrics">
+            <div class="metric-card">
+                <div class="value"><i>O</i>(1) RAM</div>
+                <div class="label">Inference Memory Footprint</div>
+            </div>
+            <div class="metric-card">
+                <div class="value"><i>O</i>(N) Speed</div>
+                <div class="label">Linear Training Complexity</div>
+            </div>
+            <div class="metric-card">
+                <div class="value">20B – 50B</div>
+                <div class="label">Target Foundation Scale</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabbed Project & Roadmap View -->
+    <nav class="tabs-header">
+        <button class="tab-btn active" onclick="openTab(event, 'loci-s4d')">Loci-S4D Core Architecture</button>
+        <button class="tab-btn" onclick="openTab(event, 'roadmap')">Building the Future (20B–50B Plan)</button>
+        <button class="tab-btn" onclick="openTab(event, 'stack')">Infrastructure & Tech Stack</button>
+    </nav>
+
+    <!-- TAB 1: Loci-S4D Architecture -->
+    <div id="loci-s4d" class="tab-content active">
+        <h3 style="margin-bottom: 12px;">Loci-S4D: Constant-Memory State Space Architecture</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            Loci-S4D combines continuous diagonalized state-space discretization with quasi-random Halton sequence anchoring and dynamic Gaussian window focus. This hybrid design allows the network to maintain precise long-range temporal recall without requiring quadratic memory expansion during generation.
+        </p>
+
+        <div class="roadmap-list">
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">1. Continuous Dynamic State Space (HiPPO/S4D)</span>
+                    <span class="step-badge">Core Kernel</span>
+                </div>
+                <p class="step-desc">
+                    Replaces token-by-token spatial attention with a continuous temporal state operator. Leverages normal-plus-low-rank spectral decomposition to preserve long-range dependencies across millions of tokens without forgetting early context.
+                </p>
+                <div class="tech-tags">
+                    <span class="tag">HiPPO Matrix</span>
+                    <span class="tag">Diagonal Discretization</span>
+                    <span class="tag">Bfloat16</span>
+                </div>
+            </div>
+
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">2. Spatial Anchoring</span>
+                    <span class="step-badge">Memory Indexing</span>
+                </div>
+                <p class="step-desc">
+                    Employs low-discrepancy quasi-random spatial sequences to anchor recurrent memory states across high-dimensional latent vectors, preventing gradient degradation over extended token sequences.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Roadmap to 20B-50B -->
+    <div id="roadmap" class="tab-content">
+        <h3 style="margin-bottom: 12px;">Building the Future: Production Model Execution Plan</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            Our step-by-step technical roadmap to deliver our first production-ready, medium-sized (20B–50B parameter) Loci-S4D foundation model to market.
+        </p>
+
+        <div class="roadmap-list">
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">Phase 1: Triton Kernel Engineering & Micro-Benchmarking</span>
+                    <span class="step-badge">Active Milestone</span>
+                </div>
+                <p class="step-desc">
+                    Optimize custom Triton GPU kernels for channel-parallel state recurrences to maximize Model Flop Utilization (MFU &ge; 90%) on NVIDIA H100 and A100 clusters. Validate zero memory decay on synthetic sequences up to 1M tokens.
+                </p>
+                <div class="tech-tags">
+                    <span class="tag">Triton</span>
+                    <span class="tag">CUDA</span>
+                    <span class="tag">FP8 / BF16</span>
+                    <span class="tag">H100 Benchmarking</span>
+                </div>
+            </div>
+
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">Phase 2: Small-Scale Validation (1B – 7B Pre-Training)</span>
+                    <span class="step-badge">Q3 2026</span>
+                </div>
+                <p class="step-desc">
+                    Execute pre-training runs on 500 Billion tokens of curated code, mathematical reasoning, and long-form document datasets. Evaluate needle-in-a-haystack accuracy and inference speed against standard Llama-3 and Mamba baselines.
+                </p>
+                <div class="tech-tags">
+                    <span class="tag">PyTorch Distributed</span>
+                    <span class="tag">DeepSpeed</span>
+                    <span class="tag">AWS EFA</span>
+                    <span class="tag">Megatron-LM</span>
+                </div>
+            </div>
+
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">Phase 3: Production Training (20B – 50B Parameter Model)</span>
+                    <span class="step-badge">Q4 2026</span>
+                </div>
+                <p class="step-desc">
+                    Scale up compute to train the full 20B–50B parameter architecture across 2.5 Trillion tokens. Deploy 3D parallelism (Tensor, Pipeline, and Sequence Parallelism) using AWS EC2 UltraClusters to deliver enterprise-grade performance.
+                </p>
+                <div class="tech-tags">
+                    <span class="tag">20B-50B Scale</span>
+                    <span class="tag">AWS P5 / P4d</span>
+                    <span class="tag">Slurm</span>
+                    <span class="tag">FS2 Checkpointing</span>
+                </div>
+            </div>
+
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">Phase 4: SFT, Alignment & Enterprise Deployment</span>
+                    <span class="step-badge">Q1 2027</span>
+                </div>
+                <p class="step-desc">
+                    Apply Supervised Fine-Tuning (SFT) and Direct Preference Optimization (DPO) for multi-step reasoning. Package the final weights into lightweight vLLM and TensorRT-LLM runtimes for low-latency API and edge deployment.
+                </p>
+                <div class="tech-tags">
+                    <span class="tag">DPO Alignment</span>
+                    <span class="tag">TensorRT-LLM</span>
+                    <span class="tag">vLLM Plugin</span>
+                    <span class="tag">Enterprise API</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Tech Stack & Cloud Infrastructure -->
+    <div id="stack" class="tab-content">
+        <h3 style="margin-bottom: 12px;">Infrastructure & Cloud Deployment Architecture</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            Brute Force Intelligence leverages high-performance AWS cloud infrastructure to manage large-scale data pipelines, model checkpointing, and GPU cluster orchestration.
+        </p>
+
+        <div class="roadmap-list">
+            <div class="roadmap-step">
+                <div class="step-header">
+                    <span class="step-title">AWS Compute & Networking Architecture</span>
+                    <span class="step-badge">Cloud Specs</span>
+                </div>
+                <p class="step-desc">
+                    • <strong>Compute:</strong> AWS EC2 <code>p5.48xlarge</code> (8x H100) and <code>g5.12xlarge</code> (4x A10G) instances for distributed pre-training and kernel validation.<br>
+                    • <strong>Storage:</strong> Amazon S3 for high-throughput streaming of terabyte-scale datasets and distributed checkpointing.<br>
+                    • <strong>Networking:</strong> AWS Elastic Fabric Adapter (EFA) enabling 3.2 Tbps node-to-node interconnect for low-latency multi-node scaling.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Brute Force Intelligence. All rights reserved. | <a href="https://github.com/smongan1" target="_blank">GitHub Repository</a></p>
+    </footer>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+</body>
+</html>
