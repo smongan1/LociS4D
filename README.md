@@ -1,9 +1,78 @@
-Bruteforce Intelligence | Loci-S4D ArchitectureProprietary Software Notice:Copyright (c) 2026 Bruteforce Intelligence. All rights reserved. This repository contains proprietary research, architecture specifications, and code for the Loci-S4D foundation architecture. Unauthorized copying, distribution, or commercial use without explicit permission is strictly prohibited. See LICENSE for full details.Executive OverviewLoci-S4D is a constant-memory State-Space Model (SSM) foundation architecture designed to eliminate the quadratic memory wall inherent in modern Transformer Key-Value (KV) caches.By replacing token-to-token spatial attention with continuous temporal state operators and quasi-random spatial state anchoring, Loci-S4D achieves constant $\mathcal{O}(1)$ inference RAM complexity and linear $\mathcal{O}(N)$ training runtime. This enables high-throughput, extreme long-context processing (1M+ tokens) on standard enterprise GPU infrastructure.       Standard Transformer (KV-Cache)              Loci-S4D Continuous Recurrence
+# Brute Force Intelligence | Loci-S4D Architecture
+
+> **Proprietary Software Notice:**
+> Copyright (c) 2026 Brute Force Intelligence. All rights reserved. This repository contains proprietary research, architecture specifications, and code for the **Loci-S4D** foundation architecture. Unauthorized copying, distribution, or commercial use without explicit permission is strictly prohibited. See [`LICENSE`](https://www.google.com/search?q=./LICENSE) for full details.
+
+---
+
+## Executive Overview
+
+**Loci-S4D** is a constant-memory State-Space Model (SSM) foundation architecture designed to eliminate the quadratic memory wall inherent in modern Transformer Key-Value (KV) caches.
+
+By replacing token-to-token spatial attention with continuous temporal state operators and quasi-random spatial state anchoring, Loci-S4D achieves **constant $\mathcal{O}(1)$ inference RAM complexity** and **linear $\mathcal{O}(N)$ training runtime**. This enables high-throughput, extreme long-context processing (1M+ tokens) on standard enterprise GPU infrastructure.
+
+```
+       Standard Transformer (KV-Cache)              Loci-S4D Continuous Recurrence
 ┌──────────────────────────────────────────┐    ┌──────────────────────────────────┐
 │ Context Length (N) ──►  Memory ~ O(N)    │    │ Context Length (N) ──► Memory    │
 │ [Memory exhausts GPU VRAM at scale]      │    │ [Constant O(1) RAM Footprint]    │
 └──────────────────────────────────────────┘    └──────────────────────────────────┘
-Key Performance HighlightsMetricTransformer (Llama-3)Standard SSM (Mamba-2)Loci-S4DInference Memory$\mathcal{O}(N)$ Quadratic / Linear expansion$\mathcal{O}(1)$ State Bounded$\mathcal{O}(1)$ Constant FootprintTraining Speed$\mathcal{O}(N^2)$ Context Scaling$\mathcal{O}(N)$ Linear$\mathcal{O}(N)$ LinearLong-Context Memory DecayLow (Stores all keys/values)Moderate (Context blurring)Zero (Halton-anchored state)Hardware ExecutionStandard FlashAttention-2Standard Selective ScanFused Triton Channel-Parallel KernelsCore Technical ArchitectureLoci-S4D combines continuous-time dynamic state discretization with low-discrepancy spatial indexing:Continuous Dynamic State Space (HiPPO/S4D): Replaces discrete token attention with continuous spectral decomposition (normal-plus-low-rank operators), capturing long-range temporal dependencies without context truncation.Halton Sequence Spatial Anchors: Uses quasi-random, low-discrepancy spatial anchors within high-dimensional hidden vectors to prevent gradient degradation and long-context information blurring.Gaussian Loci Focus Windows: Parameterized temporal kernels that dynamically focus state transition matrices onto active sequence sub-windows without requiring explicit KV storage.Custom Fused Triton GPU Kernels: Engineered directly for channel-parallel linear recurrences on NVIDIA H100/A100 Tensor Cores, targeting Model FLOPs Utilization (MFU) $\ge 85\%$.Technical Roadmap (Target Scale: 20B–50B)[x] Phase 1: Architecture Specification & Mathematical FormulationContinuous discretization formulas and normal-plus-low-rank spectral decomposition logic defined.[ ] Phase 2: Triton Kernel Engineering & Micro-BenchmarkingDevelop fused Triton kernels for channel-parallel linear recurrences with FP8/BF16 mixed precision.[ ] Phase 3: Small-Scale Pre-Training (1B–7B Validation)Execute validation runs on 500B tokens across code, math, and long-form documents. Needle-in-a-haystack verification up to 1M context length.[ ] Phase 4: Full Production Scale (20B–50B Parameter Foundation Model)Pre-training across 2.5T tokens using 3D parallelism on AWS EC2 UltraClusters (p5/p4d instances).[ ] Phase 5: SFT, DPO Alignment & Enterprise API RuntimesImplement Supervised Fine-Tuning and TensorRT-LLM/vLLM enterprise integration plugins.Repository StructurePlaintext.
+
+```
+
+---
+
+## Key Performance Highlights
+
+| Metric | Transformer (Llama-3) | Standard SSM (Mamba-2) | Loci-S4D |
+| --- | --- | --- | --- |
+| **Inference Memory** | $\mathcal{O}(N)$ Quadratic / Linear expansion | $\mathcal{O}(1)$ State Bounded | **$\mathcal{O}(1)$ Constant Footprint** |
+| **Training Speed** | $\mathcal{O}(N^2)$ Context Scaling | $\mathcal{O}(N)$ Linear | **$\mathcal{O}(N)$ Linear** |
+| **Long-Context Memory Decay** | Low (Stores all keys/values) | Moderate (Context blurring) | **Zero (Halton-anchored state)** |
+| **Hardware Execution** | Standard FlashAttention-2 | Standard Selective Scan | **Fused Triton Channel-Parallel Kernels** |
+
+---
+
+## Core Technical Architecture
+
+Loci-S4D combines continuous-time dynamic state discretization with low-discrepancy spatial indexing:
+
+1. **Continuous Dynamic State Space (HiPPO/S4D):** Replaces discrete token attention with continuous spectral decomposition (normal-plus-low-rank operators), capturing long-range temporal dependencies without context truncation.
+2. **Halton Sequence Spatial Anchors:** Uses quasi-random, low-discrepancy spatial anchors within high-dimensional hidden vectors to prevent gradient degradation and long-context information blurring.
+3. **Gaussian Loci Focus Windows:** Parameterized temporal kernels that dynamically focus state transition matrices onto active sequence sub-windows without requiring explicit KV storage.
+4. **Custom Fused Triton GPU Kernels:** Engineered directly for channel-parallel linear recurrences on NVIDIA H100/A100 Tensor Cores, targeting Model FLOPs Utilization (MFU) $\ge 85\%$.
+
+---
+
+## Technical Roadmap (Target Scale: 20B–50B)
+
+* [x] **Phase 1: Architecture Specification & Mathematical Formulation**
+* Continuous discretization formulas and normal-plus-low-rank spectral decomposition logic defined.
+
+
+* [ ] **Phase 2: Triton Kernel Engineering & Micro-Benchmarking**
+* Develop fused Triton kernels for channel-parallel linear recurrences with FP8/BF16 mixed precision.
+
+
+* [ ] **Phase 3: Small-Scale Pre-Training (1B–7B Validation)**
+* Execute validation runs on 500B tokens across code, math, and long-form documents. Needle-in-a-haystack verification up to 1M context length.
+
+
+* [ ] **Phase 4: Full Production Scale (20B–50B Parameter Foundation Model)**
+* Pre-training across 2.5T tokens using 3D parallelism on AWS EC2 UltraClusters (p5/p4d instances).
+
+
+* [ ] **Phase 5: SFT, DPO Alignment & Enterprise API Runtimes**
+* Implement Supervised Fine-Tuning and TensorRT-LLM/vLLM enterprise integration plugins.
+
+
+
+---
+
+## Repository Structure
+
+```text
+.
 ├── docs/                   # Architecture whitepapers & mathematical proofs
 ├── src/
 │   ├── kernels/            # Fused Triton GPU kernels (Channel-parallel scan)
@@ -12,4 +81,17 @@ Key Performance HighlightsMetricTransformer (Llama-3)Standard SSM (Mamba-2)Loci-
 ├── benchmarks/             # Memory footprint & needle-in-a-haystack verification
 ├── LICENSE                 # Proprietary All-Rights-Reserved License
 └── README.md
-Contact & CitationBruteforce IntelligencePrimary Contact: Sean Mongan (Founder & Lead Engineer)Email: sean.mongan@bruteforceintelligence.comWebsite: https://bruteforceintelligence.com
+
+```
+
+---
+
+## Contact & Citation
+
+**Brute Force Intelligence**
+
+Primary Contact: Sean Mongan (Founder & Lead Engineer)
+
+Email: [sean.mongan@bruteforceintelligence.com](https://www.google.com/search?q=mailto%3Asean.mongan%40bruteforceintelligence.com)
+
+Website: [https://bruteforceintelligence.com](https://www.google.com/search?q=https://bruteforceintelligence.com)
