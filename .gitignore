@@ -1,4 +1,13 @@
-runpods/configs/*
+src/configs/*
 *.zip
 *.json
 *.pth
+__pycache__/
+*.pyc
+.env
+*.pt
+*.bin
+*.safetensors
+wandb/
+.idea/
+.vscode/
